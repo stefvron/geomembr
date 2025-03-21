@@ -10,6 +10,10 @@
     --bg-layer-2: rgba(10, 20, 25, 0.8);
     
     --bg-correct: rgba(30, 105, 60, 0.8);
+    --failed-1: rgba(105, 105, 60, 0.8);
+    --failed-2: rgba(105, 85, 60, 0.8);
+    --failed-3: rgba(105, 65, 60, 0.8);
+    --bg-failed: rgba(105, 40, 60, 0.8);
 }
 
 body {
@@ -113,6 +117,19 @@ header > select {
 }
 #map > *.correct {
     fill: var(--bg-correct) !important;
+    cursor: default;
+}
+#map > *.failed-1 {
+    fill: var(--failed-1) !important;
+}
+#map > *.failed-2 {
+    fill: var(--failed-2) !important;
+}
+#map > *.failed-3 {
+    fill: var(--failed-3) !important;
+}
+#map > *.failed {
+    fill: var(--bg-failed) !important;
     cursor: default;
 }
 .countryDot {

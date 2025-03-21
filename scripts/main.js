@@ -165,20 +165,28 @@ function zoomMap(zoom) {
 }
 
 function nextQuestion() {
+    fails = 0;
     if(!guessMode.hasNextQuestion()) return;
     document.getElementById("guess-box").innerHTML = guessMode.nextQuestion();
 }
-window.next = nextQuestion;
 
 function checkAnswer(answer) {
     let answerNodes = document.getElementsByClassName(answer);
-    if(answerNodes[0].classList.contains("correct")) return;
+    if(answerNodes[0].classList.contains("correct") || answerNodes[0].classList.contains("failed")) return;
     if(guessMode.checkAnswer(answer)) {
         for(let i = 0; i < answerNodes.length; i++) {
             answerNodes[i].classList.add("correct");
+            answerNodes[i].classList.add("failed-" + fails);
         }
         nextQuestion();
     } else {
-
+        fails++;
+        if(fails > 3) {
+            answerNodes = document.getElementsByClassName(guessMode.getAnswer());
+            for(let i = 0; i < answerNodes.length; i++) {
+                answerNodes[i].classList.add("failed");
+            }
+            nextQuestion();
+        }
     }
 }

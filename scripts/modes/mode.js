@@ -14,6 +14,9 @@ export class Mode{
     checkAnswer(answer) {
         return true;
     }
+    getAnswer() {
+        return "";
+    }
     shuffle(arr) {
         let i = arr.length;
         while(i != 0) {

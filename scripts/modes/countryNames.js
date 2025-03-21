@@ -28,6 +28,10 @@ export class CountryNamesMode extends Mode {
         return this.questions[this.index-1][1] == answer;
     }
 
+    getAnswer() {
+        return this.questions[this.index-1][1];
+    }
+
     async initQuestions() {
         let questReq = await fetch("./assets/questions/countryNames.txt");
         let questions = await questReq.text();
