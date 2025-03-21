@@ -1,4 +1,4 @@
-# GeoTrainr
+# GeoMember
 Currently work in progress.
 
 # Credits
