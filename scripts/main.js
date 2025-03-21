@@ -90,6 +90,7 @@ function initMapHandlers() {
         moved = false;
     });
     mapC.addEventListener("touchstart", event => {
+        event.preventDefault();
         if(event.touches.length == 1) {
             dragging = true;
             moved = false;
@@ -111,6 +112,7 @@ function initMapHandlers() {
         }
     });
     mapC.addEventListener("touchend", event => {
+        event.preventDefault();
         dragging = false;
         if(event.touches.length == 1) {
             if(!moved) {
@@ -125,6 +127,7 @@ function initMapHandlers() {
         moved = true;
     });
     mapC.addEventListener("touchmove", event => {
+        event.preventDefault();
         moved = true;
         if(event.touches.length == 1) {
             let moveX = event.touches[0].clientX - lastClientX;
