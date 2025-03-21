@@ -1,4 +1,4 @@
-# GeoMember
+# GeoMembr
 Currently work in progress.
 
 # Credits
