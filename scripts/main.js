@@ -8,7 +8,11 @@ let moved = false;
 let lastClientX = 0;
 let lastClientY = 0;
 let lastDistance = 0;
+
+let mapX = 0;
+let mapY = 0;
 let zoomLevel = 1;
+
 let fails = 0;
 let guessMode = null;
 
@@ -38,6 +42,17 @@ async function initMap() {
     
     let mapSVG = document.getElementById("map");
 
+    initMapHandlers();
+
+    mapSVG.style.left = 0;
+    mapSVG.style.top = document.getElementsByTagName("header")[0].clientHeight;
+    mapX = (innerWidth-mapSVG.clientWidth) / 2;
+    placeMap();
+
+}
+function initMapHandlers() {
+    let mapC = document.getElementById("map-container");
+    let mapSVG = document.getElementById("map");
     let paths = mapSVG.children;
     for(let i = 0; i < paths.length; i++) {
         let pBox = paths[i].getBBox();
@@ -70,10 +85,6 @@ async function initMap() {
             }
         });
     }
-
-    mapSVG.style.left = 0;
-    mapSVG.style.top = document.getElementsByTagName("header")[0].clientHeight;
-
     mapC.addEventListener("mousedown", event => {
         dragging = true;
         moved = false;
@@ -85,6 +96,7 @@ async function initMap() {
             lastClientX = event.touches[0].clientX;
             lastClientY = event.touches[0].clientY;
         } else if(event.touches.length == 2) {
+            moved = true;
             let dx = event.touches[0].clientX - event.touches[1].clientX;
             let dy = event.touches[0].clientY - event.touches[1].clientY;
             lastDistance = Math.sqrt(dx**2 + dy**2);
@@ -99,8 +111,8 @@ async function initMap() {
         }
     });
     mapC.addEventListener("touchend", event => {
+        dragging = false;
         if(event.touches.length == 1) {
-            dragging = false;
             if(!moved) {
                 if(event.target.id != "map" && event.target.id != "map-container") {
                     checkAnswer(event.target.classList[0]);
@@ -113,6 +125,7 @@ async function initMap() {
         moved = true;
     });
     mapC.addEventListener("touchmove", event => {
+        moved = true;
         if(event.touches.length == 1) {
             let moveX = event.touches[0].clientX - lastClientX;
             lastClientX = event.touches[0].clientX;
@@ -120,38 +133,51 @@ async function initMap() {
             lastClientY = event.touches[0].clientY;
 
             dragMap(moveX, moveY);
-            moved = true;
         } else if(event.touches.length == 2) {
             let dx = event.touches[0].clientX - event.touches[1].clientX;
             let dy = event.touches[0].clientY - event.touches[1].clientY;
             let newDistance = Math.sqrt(dx**2 + dy**2);
             let zoom = newDistance/lastDistance;
             lastDistance = newDistance;
-            zoomMap(zoom);
+            let lX = (event.touches[0].clientX + event.touches[1].clientX) / 2;
+            let lY = (event.touches[0].clientY + event.touches[1].clientY) / 2;
+            zoomMap(zoom, lX, lY);
         }
     });
     mapC.addEventListener("wheel", event => {
         let zoom = 1;
         if(event.deltaY > 0) zoom = 1.1;
         else zoom = 0.9;
-        zoomMap(zoom);
+        zoomMap(zoom, event.clientX, event.clientY);
     });
 }
 function dragMap(mx, my) {
-    let mapSVG = document.getElementById("map");
     if(dragging) {
-        let newLeft = (parseInt(mapSVG.style.left, 10) + mx/zoomLevel);
-        let newTop = (parseInt(mapSVG.style.top, 10) + my/zoomLevel);
-        mapSVG.style.left = newLeft + "px";
-        mapSVG.style.top = newTop + "px";
-        mapSVG.style.transformOrigin = "calc(50% - " + newLeft + "px) calc(50% - " + newTop + "px)";
+        mapX += mx / zoomLevel;
+        mapY += my / zoomLevel;
     }
+    placeMap();
 }
-function zoomMap(zoom) {
+function zoomMap(zoom, lX, lY) {
+    let mapC = document.getElementById("map-container");
+    let mapSVG = document.getElementById("map");
+
+    let oldZoom = zoomLevel;
     zoomLevel *= zoom;
     zoomLevel = Math.max(zoomLevel, 1);
-    let mapSVG = document.getElementById("map");
-    mapSVG.style.transform = "scale(" + zoomLevel + ")";
+    if(zoomLevel == oldZoom) return;
+
+    lX -= mapC.clientTop;
+    lY -= mapC.clientLeft;
+
+    let lW = Math.min(mapC.clientWidth, mapSVG.clientWidth);
+    let lH = Math.min(mapC.clientHeight, mapSVG.clientHeight);
+
+    mapX -= (lX - lW/2)/oldZoom -
+        (lX - lW/2)/zoomLevel;
+    mapY -= (lY - lH/2)/oldZoom -
+        (lY - lH/2)/zoomLevel;
+
     let circleR = minCountrySize * (1/Math.min(3, zoomLevel));
     let circles = document.getElementsByTagName("circle");
     for(let i = 0; i < circles.length; i++) {
@@ -161,7 +187,14 @@ function zoomMap(zoom) {
     for(let i = 0; i < paths.length; i++) {
         paths[i].style.strokeWidth = (1/zoomLevel) + "px";
     }
-    return;
+
+    placeMap();
+}
+function placeMap() {
+    let mapSVG = document.getElementById("map");
+
+    mapSVG.style.transform = "scale(" + zoomLevel + ") " +
+        "translate(" + mapX + "px, " + mapY + "px)";
 }
 
 function nextQuestion() {
