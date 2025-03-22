@@ -36,13 +36,14 @@ Chile;CL
 China;CN
 Colombia;CO
 Comoros;KM
-Congo (Congo-Brazzaville);CG
-Congo (Democratic Republic);CD
+Republic of the Congo;CG
 Costa Rica;CR
 Croatia;HR
 Cuba;CU
 Cyprus;CY
 Czechia;CZ
+North Korea;KP
+Democratic Republic of the Congo;CD
 Denmark;DK
 Djibouti;DJ
 Dominica;DM
@@ -86,6 +87,7 @@ Jordan;JO
 Kazakhstan;KZ
 Kenya;KE
 Kiribati;KI
+South Korea;KR
 Kuwait;KW
 Kyrgyzstan;KG
 Laos;LA
@@ -107,7 +109,7 @@ Marshall Islands;MH
 Mauritania;MR
 Mauritius;MU
 Mexico;MX
-Micronesia;FM
+Federated States of Micronesia;FM
 Moldova;MD
 Monaco;MC
 Mongolia;MN
@@ -123,13 +125,11 @@ New Zealand;NZ
 Nicaragua;NI
 Niger;NE
 Nigeria;NG
-North Korea;KP
 North Macedonia;MK
 Norway;NO
 Oman;OM
 Pakistan;PK
 Palau;PW
-Palestine;PS
 Panama;PA
 Papua New Guinea;PG
 Paraguay;PY
@@ -139,14 +139,14 @@ Poland;PL
 Portugal;PT
 Qatar;QA
 Romania;RO
-Russia;RU
+Russian;RU
 Rwanda;RW
 Saint Kitts and Nevis;KN
 Saint Lucia;LC
 Saint Vincent and the Grenadines;VC
 Samoa;WS
 San Marino;SM
-Sao Tome and Principe;ST
+São Tomé and Príncipe;ST
 Saudi Arabia;SA
 Senegal;SN
 Serbia;RS
@@ -158,7 +158,6 @@ Slovenia;SI
 Solomon Islands;SB
 Somalia;SO
 South Africa;ZA
-South Korea;KR
 South Sudan;SS
 Spain;ES
 Sri Lanka;LK
@@ -166,11 +165,12 @@ Sudan;SD
 Suriname;SR
 Sweden;SE
 Switzerland;CH
-Syria;SY
+Syrian;SY
+Taiwan;TW
 Tajikistan;TJ
 Tanzania;TZ
 Thailand;TH
-Timor-Leste;TL
+East-Timor;TL
 Togo;TG
 Tonga;TO
 Trinidad and Tobago;TT
@@ -182,13 +182,16 @@ Uganda;UG
 Ukraine;UA
 United Arab Emirates;AE
 United Kingdom;GB
-United States;US
+United States of America;US
 Uruguay;UY
 Uzbekistan;UZ
 Vanuatu;VU
 Vatican City;VA
 Venezuela;VE
-Vietnam;VN
+Viet Nam;VN
 Yemen;YE
 Zambia;ZM
 Zimbabwe;ZW
+Ivory Coast;CI
+Western Sahara;EH
+Kosovo;XK
