@@ -17,6 +17,9 @@ export class Mode{
     getAnswer() {
         return "";
     }
+    getScope() {
+        return [];
+    }
     shuffle(arr) {
         let i = arr.length;
         while(i != 0) {

@@ -55,8 +55,13 @@ function initMapHandlers() {
     let mapC = document.getElementById("map-container");
     let mapSVG = document.getElementById("map");
     const minArea = (mapSVG.viewBox.baseVal.width / mapSVG.clientWidth) * (minCountrySize**2);
+    const scope = guessMode.getScope();
     let paths = mapSVG.children;
     for(let i = 0; i < paths.length; i++) {
+        if(!scope.includes(paths[i].classList[0])) {
+            paths[i].classList.add("disabledCountry");
+            continue;
+        }
         let pBox = paths[i].getBBox();
         const area = getAreaFromPath(paths[i]);
         if(area < minArea|| pBox.width < minCountrySize || pBox.height < minCountrySize) {
@@ -209,7 +214,10 @@ function nextQuestion() {
 
 function checkAnswer(answer) {
     let answerNodes = document.getElementsByClassName(answer);
-    if(answerNodes[0].classList.contains("correct") || answerNodes[0].classList.contains("failed")) return;
+    if(answerNodes[0].classList.contains("correct") ||
+        answerNodes[0].classList.contains("failed") ||
+        answerNodes[0].classList.contains("disabledCountry")
+    ) return;
     if(guessMode.checkAnswer(answer)) {
         for(let i = 0; i < answerNodes.length; i++) {
             answerNodes[i].classList.add("correct");

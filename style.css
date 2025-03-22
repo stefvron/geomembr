@@ -10,6 +10,7 @@
     --bg-layer-2: rgba(10, 20, 25, 0.8);
     
     --bg-correct: rgba(30, 105, 60, 0.8);
+    --bg-disabled: rgba(80, 80, 80, 0.8);
     --failed-1: rgba(105, 105, 60, 0.8);
     --failed-2: rgba(105, 85, 60, 0.8);
     --failed-3: rgba(105, 65, 60, 0.8);
@@ -114,6 +115,10 @@ header > select {
 }
 .highlightedCountry {
     fill: var(--bg-layer-1) !important;
+}
+.disabledCountry {
+    fill: var(--bg-disabled) !important;
+    cursor: default !important;
 }
 #map > *.correct {
     fill: var(--bg-correct) !important;
