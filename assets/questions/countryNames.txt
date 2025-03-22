@@ -188,7 +188,7 @@ Uzbekistan;UZ
 Vanuatu;VU
 Vatican City;VA
 Venezuela;VE
-Viet Nam;VN
+Vietnam;VN
 Yemen;YE
 Zambia;ZM
 Zimbabwe;ZW
