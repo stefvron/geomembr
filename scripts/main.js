@@ -93,7 +93,6 @@ function initMapHandlers() {
         moved = false;
     });
     mapC.addEventListener("touchstart", event => {
-        event.preventDefault();
         if(event.touches.length == 1) {
             dragging = true;
             moved = false;
