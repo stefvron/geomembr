@@ -195,3 +195,4 @@ Zimbabwe;ZW
 Ivory Coast;CI
 Western Sahara;EH
 Kosovo;XK
+Palestine;PS
