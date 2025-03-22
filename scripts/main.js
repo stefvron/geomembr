@@ -1,4 +1,5 @@
 import { CountryNamesMode } from "./modes/countryNames.js";
+import { getAreaFromPath } from "./utils.js";
 
 const svgNS = "http://www.w3.org/2000/svg";
 const minCountrySize = 5.5;
@@ -53,10 +54,12 @@ async function initMap() {
 function initMapHandlers() {
     let mapC = document.getElementById("map-container");
     let mapSVG = document.getElementById("map");
+    const minArea = (mapSVG.viewBox.baseVal.width / mapSVG.clientWidth) * (minCountrySize**2);
     let paths = mapSVG.children;
     for(let i = 0; i < paths.length; i++) {
         let pBox = paths[i].getBBox();
-        if(pBox.width < minCountrySize || pBox.height < minCountrySize) {
+        const area = getAreaFromPath(paths[i]);
+        if(area < minArea|| pBox.width < minCountrySize || pBox.height < minCountrySize) {
             if(paths[i].classList.contains(paths[i].id)) {
                 let pX = pBox.x + pBox.width / 2;
                 let pY = pBox.y + pBox.height / 2;
@@ -178,7 +181,7 @@ function zoomMap(zoom, lX, lY) {
     mapY -= (lY - lH/2)/oldZoom -
         (lY - lH/2)/zoomLevel;
 
-    let circleR = minCountrySize * (1/Math.min(3, zoomLevel));
+    let circleR = minCountrySize * (1/Math.min(2, zoomLevel)) / 2;
     let circles = document.getElementsByTagName("circle");
     for(let i = 0; i < circles.length; i++) {
         circles[i].setAttribute("r", circleR);
