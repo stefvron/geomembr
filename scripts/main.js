@@ -114,7 +114,6 @@ function initMapHandlers() {
         }
     });
     mapC.addEventListener("touchend", event => {
-        event.preventDefault();
         dragging = false;
         if(event.touches.length == 1) {
             if(!moved) {
@@ -183,7 +182,7 @@ function zoomMap(zoom, lX, lY) {
     mapY -= (lY - lH/2)/oldZoom -
         (lY - lH/2)/zoomLevel;
 
-    let circleR = minCountrySize * (1/Math.min(2, zoomLevel)) / 2;
+    let circleR = minCountrySize * (1/Math.min(1.5, zoomLevel)) / 2;
     let circles = document.getElementsByTagName("circle");
     for(let i = 0; i < circles.length; i++) {
         circles[i].setAttribute("r", circleR);
