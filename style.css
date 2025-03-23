@@ -49,29 +49,43 @@ header > select {
     margin: auto;
 }
 #main-header {
-    width: 100%;
+    display: grid;
+    grid-template-columns: 50px 1fr 50px;
+    width: calc(100vw - 2 * var(--margin));
     height: 20px;
     display: inline-block;
     padding-top: var(--margin);
     padding-bottom: var(--margin);
     background-color: var(--bg-layer-2);
+    padding-left: var(--margin);
+    padding-right: var(--margin);
 }
-#main-header > * {
+#main-header * {
+    display: inline-block;
+}
+#main-header > span {
     line-height: 20px;
     font-size: 20px;
     margin: 0;
-    justify-content: space-between;
 }
 #main-header-percentage {
     text-align: left;
-    float: left;
-    margin-left: var(--margin);
 }
+#fail-box {
+    width: calc(100% - 2*50px + 2*var(--margin));
+}
+#fail-box > span {
+    width: 100%;
+    text-align: center;
+}
+#fail-box > span::before {
+    content: "Wrong guess: ";
+}
+
 #main-header-timer {
     text-align: right;
-    float: right;
-    margin-right: var(--margin);
 }
+
 #guess-box {
     position: absolute;
     bottom: var(--margin);
@@ -106,7 +120,6 @@ header > select {
     object-fit: contain;
     height: 80vh;
     top: 20vh;
-    overflow: hidden;
 }
 #map > * {
     fill: var(--bg-layer-2);

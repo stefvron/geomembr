@@ -62,15 +62,15 @@ function initMapHandlers() {
             paths[i].classList.add("disabledCountry");
             continue;
         }
-        let pBox = paths[i].getBBox();
+        
         const area = getAreaFromPath(paths[i]);
+        let pBox = paths[i].getBBox();
+
         if(area < minArea|| pBox.width < minCountrySize || pBox.height < minCountrySize) {
             if(paths[i].classList.contains(paths[i].id)) {
-                let pX = pBox.x + pBox.width / 2;
-                let pY = pBox.y + pBox.height / 2;
                 let node = document.createElementNS(svgNS, "circle");
-                node.setAttribute("cx", pX);
-                node.setAttribute("cy", pY);
+                node.setAttribute("cx", getCentreOfPath(paths[i]).x);
+                node.setAttribute("cy", getCentreOfPath(paths[i]).y);
                 node.setAttribute("r", minCountrySize/2);
                 node.classList.add(paths[i].classList[0]);
                 node.classList.add("countryDot");
@@ -209,10 +209,13 @@ function placeMap() {
 function nextQuestion() {
     fails = 0;
     if(!guessMode.hasNextQuestion()) return;
-    document.getElementById("guess-box").innerHTML = guessMode.nextQuestion();
+    document.getElementById("guess-box").innerHTML = "";
+    document.getElementById("guess-box").appendChild(guessMode.nextQuestion());
 }
 
 function checkAnswer(answer) {
+    let mapSVG = document.getElementById("map");
+
     let answerNodes = document.getElementsByClassName(answer);
     if(answerNodes[0].classList.contains("correct") ||
         answerNodes[0].classList.contains("failed") ||
@@ -225,6 +228,12 @@ function checkAnswer(answer) {
         }
         nextQuestion();
     } else {
+        let helpNode = guessMode.getMapTag(answer);
+        helpNode.classList.add("helpNode");
+        document.getElementById("fail-box").innerHTML = "";
+        document.getElementById("fail-box").appendChild(helpNode);
+        removeElementAfterMs(helpNode, 2000);
+
         fails++;
         if(fails > 3) {
             answerNodes = document.getElementsByClassName(guessMode.getAnswer());
@@ -234,4 +243,22 @@ function checkAnswer(answer) {
             nextQuestion();
         }
     }
+}
+
+function removeElementAfterMs(node, ms) {
+    setTimeout(() => {
+        node.remove();
+    }, ms);
+}
+
+function getCentreOfPath(path) {
+    let pBox = path.getBBox();
+
+    let pX = pBox.x + pBox.width / 2;
+    let pY = pBox.y + pBox.height / 2;
+    if(path.getAttribute("cx")) 
+        pX = path.getAttribute("cx");
+    if(path.getAttribute("cy"))
+        pY = path.getAttribute("cy");
+    return {x: pX, y: pY};
 }

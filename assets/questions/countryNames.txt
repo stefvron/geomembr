@@ -139,7 +139,7 @@ Poland;PL
 Portugal;PT
 Qatar;QA
 Romania;RO
-Russian;RU
+Russia;RU
 Rwanda;RW
 Saint Kitts and Nevis;KN
 Saint Lucia;LC
@@ -165,7 +165,7 @@ Sudan;SD
 Suriname;SR
 Sweden;SE
 Switzerland;CH
-Syrian;SY
+Syria;SY
 Taiwan;TW
 Tajikistan;TJ
 Tanzania;TZ

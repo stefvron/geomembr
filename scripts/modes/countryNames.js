@@ -1,4 +1,4 @@
-import { Mode } from "./mode.js";
+import { Mode, svgNS } from "./mode.js";
 
 export class CountryNamesMode extends Mode {
     constructor(onInit) {
@@ -21,7 +21,9 @@ export class CountryNamesMode extends Mode {
     }
 
     nextQuestion() {
-        return "<span>" + this.questions[this.index++][0] + "</span>";
+        let question = document.createElement("span");
+        question.innerHTML = this.questions[this.index++][0];
+        return question;
     }
 
     checkAnswer(answer) {
@@ -34,6 +36,11 @@ export class CountryNamesMode extends Mode {
 
     getScope() {
         return this.questions.map(x => x[1]);
+    }
+    getMapTag(code) {
+        let tag = document.createElement("span");
+        tag.innerHTML = this.questions.find(x => x[1] == code)[0];
+        return tag;
     }
 
     async initQuestions() {
