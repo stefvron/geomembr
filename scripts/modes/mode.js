@@ -1,3 +1,5 @@
+export const svgNS = "http://www.w3.org/2000/svg";
+
 export class Mode{
     constructor(onInit) {
         onInit();
@@ -19,6 +21,9 @@ export class Mode{
     }
     getScope() {
         return [];
+    }
+    getMapTag(code) {
+        return "";
     }
     shuffle(arr) {
         let i = arr.length;
