@@ -13,7 +13,7 @@ export class CountryNamesMode extends Mode {
     }
 
     getMap() {
-        return "./assets/maps/world-2.svg";
+        return "./assets/maps/countries.svg";
     }
 
     hasNextQuestion() {
