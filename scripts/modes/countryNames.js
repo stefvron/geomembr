@@ -51,6 +51,7 @@ export class CountryNamesMode extends Mode {
             questions[i] = questions[i].split(";")
         }
         this.index = 0;
+        questions = questions.filter(x => x[0] != "");
         super.shuffle(questions);
         return questions;
     }
