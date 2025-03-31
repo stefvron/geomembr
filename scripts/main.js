@@ -5,6 +5,11 @@ import { getAreaFromPath } from "./utils.js";
 
 const svgNS = "http://www.w3.org/2000/svg";
 const minCountrySize = 5.5;
+const guessModes = {
+    "Countries": CountryNamesMode,
+    "Territories": TerritoryNamesMode,
+    "TLDs/Domain-Endings": TldMode,
+};
 
 let dragging = false;
 let moved = false;
@@ -18,27 +23,103 @@ let zoomLevel = 1;
 
 let fails = 0;
 let guessMode = null;
+let abortController = new AbortController();
 
 async function init() {
+    guessMode = null;
+
     document.addEventListener("gesturestart", event => {
         event.preventDefault();
     });
     document.addEventListener("gesturechange", event => {
         event.preventDefault();
     });
-    start("cn");
+    initModeSelection();
 }
 window.init = init;
 
+function initModeSelection() {
+    let modeSelect = document.getElementById("mode-selection");
+    modeSelect.childNodes.forEach(c => {
+        if(c.value != "none") modeSelect.removeChild(c);
+    });
+    Object.entries(guessModes).forEach(m => {
+        let k = m[0];
+        let opt = document.createElement("option");
+        opt.value = k;
+        opt.innerHTML = k;
+        modeSelect.appendChild(opt);
+    });
+    modeSelect.addEventListener("change", select);
+
+    function select(event) {
+        abortController.abort();
+        switch(modeSelect.value) {
+            case "none":
+                break;
+            default:
+                start(guessModes[modeSelect.value]);
+                break;
+        }
+    }
+}
+
 async function start(mode) {
-    guessMode = new TldMode(() => {
+    fails = 0;
+    
+    guessMode = new mode(() => {
+        initHeader();
         initMap();
         nextQuestion();
     });
 }
 window.start = start;
 
+let perc = 0;
+let seconds = 0;
+let abortHeader = new AbortController();
+function initHeader() {
+    abortHeader = new AbortController();
+    perc = 0;
+    seconds = 0;
+
+    let headerPercent = document.getElementById("main-header-percentage");
+    headerPercent.innerHTML = perc;
+    let headerTime = document.getElementById("main-header-timer");
+    headerTime.innerHTML = formatTime(seconds);
+
+    let clock = setInterval(() => {
+        seconds++;
+        headerTime.innerHTML = formatTime(seconds);
+    }, 1000);
+    abortHeader.signal.addEventListener("abort", event => {
+        clearInterval(clock);
+    });
+
+    function formatTime(sec) {
+        let minutes = Math.floor(sec / 60);
+        let seconds = sec % 60;
+        if(seconds < 10) seconds = "0" + seconds;
+        return minutes + ":" + seconds;
+    }
+}
+function addPerc(p) {
+    perc += p;
+    let headerPercent = document.getElementById("main-header-percentage");
+    headerPercent.innerHTML = perc.toFixed(2);
+}
+
 async function initMap() {
+    dragging = false;
+    moved = false;
+    lastClientX = 0;
+    lastClientY = 0;
+    lastDistance = 0;
+    
+    mapX = 0;
+    mapY = 0;
+    zoomLevel = 1;
+    
     let mapC = document.getElementById("map-container");
     let map = await fetch(guessMode.getMap());
     mapC.innerHTML = await map.text();
@@ -54,6 +135,7 @@ async function initMap() {
 
 }
 function initMapHandlers() {
+    abortController = new AbortController();
     let mapC = document.getElementById("map-container");
     let mapSVG = document.getElementById("map");
     const minArea = (mapSVG.viewBox.baseVal.width / mapSVG.clientWidth) * (minCountrySize**2);
@@ -95,14 +177,22 @@ function initMapHandlers() {
             }
         });
     }
-    mapC.addEventListener("mousedown", event => {
+    mapC.addEventListener("mousedown", mouseDownHandler, {signal: abortController.signal});
+    mapC.addEventListener("touchstart", touchStartHandler, {signal: abortController.signal});
+    mapC.addEventListener("mouseup", mouseUpHandler, {signal: abortController.signal});
+    mapC.addEventListener("touchend", mouseUpHandler, {signal: abortController.signal});
+    mapC.addEventListener("mousemove", mouseMoveHandler, {signal: abortController.signal});
+    mapC.addEventListener("touchmove", touchMoveHandler, {signal: abortController.signal});
+    mapC.addEventListener("wheel", wheelHandler, {signal: abortController.signal});
+
+
+    function mouseDownHandler(event) {
         dragging = true;
         moved = false;
-    });
-    mapC.addEventListener("touchstart", event => {
+    }
+    function touchStartHandler(event) {
         if(event.touches.length == 1) {
-            dragging = true;
-            moved = false;
+            mouseDownHandler(event);
             lastClientX = event.touches[0].clientX;
             lastClientY = event.touches[0].clientY;
         } else if(event.touches.length == 2) {
@@ -111,30 +201,20 @@ function initMapHandlers() {
             let dy = event.touches[0].clientY - event.touches[1].clientY;
             lastDistance = Math.sqrt(dx**2 + dy**2);
         }
-    });
-    mapC.addEventListener("mouseup", event => {
+    }
+    function mouseUpHandler(event) {
         dragging = false;
         if(!moved) {
             if(event.target.id != "map" && event.target.id != "map-container") {
                 checkAnswer(event.target.classList[0]);
             }
         }
-    });
-    mapC.addEventListener("touchend", event => {
-        dragging = false;
-        if(event.touches.length == 1) {
-            if(!moved) {
-                if(event.target.id != "map" && event.target.id != "map-container") {
-                    checkAnswer(event.target.classList[0]);
-                }
-            }
-        }
-    });
-    mapC.addEventListener("mousemove", event => {
+    }
+    function mouseMoveHandler(event) {
         dragMap(event.movementX, event.movementY);
         moved = true;
-    });
-    mapC.addEventListener("touchmove", event => {
+    }
+    function touchMoveHandler(event) {
         event.preventDefault();
         moved = true;
         if(event.touches.length == 1) {
@@ -154,13 +234,13 @@ function initMapHandlers() {
             let lY = (event.touches[0].clientY + event.touches[1].clientY) / 2;
             zoomMap(zoom, lX, lY);
         }
-    });
-    mapC.addEventListener("wheel", event => {
+    }
+    function wheelHandler(event) {
         let zoom = 1;
         if(event.deltaY > 0) zoom = 1.1;
         else zoom = 0.9;
         zoomMap(zoom, event.clientX, event.clientY);
-    });
+    }
 }
 function dragMap(mx, my) {
     if(dragging) {
@@ -210,14 +290,17 @@ function placeMap() {
 
 function nextQuestion() {
     fails = 0;
-    if(!guessMode.hasNextQuestion()) return;
+    if(!guessMode.hasNextQuestion()) {
+        document.getElementById("guess-box").innerHTML = "<span>Finished!</span>";
+        document.getElementById("mode-selection").value = "none";
+        abortHeader.abort();
+        return;
+    };
     document.getElementById("guess-box").innerHTML = "";
     document.getElementById("guess-box").appendChild(guessMode.nextQuestion());
 }
 
 function checkAnswer(answer) {
-    let mapSVG = document.getElementById("map");
-
     let answerNodes = document.getElementsByClassName(answer);
     if(answerNodes[0].classList.contains("correct") ||
         answerNodes[0].classList.contains("failed") ||
@@ -228,6 +311,7 @@ function checkAnswer(answer) {
             answerNodes[i].classList.add("correct");
             answerNodes[i].classList.add("failed-" + fails);
         }
+        addPerc(1 / guessMode.getScope().length / (fails + 1) * 100);
         nextQuestion();
     } else {
         let helpNode = guessMode.getMapTag(answer);

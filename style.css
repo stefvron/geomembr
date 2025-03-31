@@ -50,7 +50,7 @@ header > select {
 }
 #main-header {
     display: grid;
-    grid-template-columns: 50px 1fr 50px;
+    grid-template-columns: 100px 1fr 100px;
     width: calc(100vw - 2 * var(--margin));
     height: 20px;
     display: inline-block;
@@ -69,10 +69,14 @@ header > select {
     margin: 0;
 }
 #main-header-percentage {
+    width: 100px;
     text-align: left;
 }
+#main-header-percentage::after {
+    content: "%";
+}
 #fail-box {
-    width: calc(100% - 2*50px + 2*var(--margin));
+    width: calc(100% - 2*120px + 2*var(--margin));
 }
 #fail-box > span {
     width: 100%;
@@ -83,6 +87,7 @@ header > select {
 }
 
 #main-header-timer {
+    width: 100px;
     text-align: right;
 }
 
