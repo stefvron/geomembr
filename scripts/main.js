@@ -1,4 +1,6 @@
 import { CountryNamesMode } from "./modes/countryNames.js";
+import { TerritoryNamesMode } from "./modes/territoryNames.js";
+import { TldMode } from "./modes/tlds.js";
 import { getAreaFromPath } from "./utils.js";
 
 const svgNS = "http://www.w3.org/2000/svg";
@@ -29,7 +31,7 @@ async function init() {
 window.init = init;
 
 async function start(mode) {
-    guessMode = new CountryNamesMode(() => {
+    guessMode = new TldMode(() => {
         initMap();
         nextQuestion();
     });
